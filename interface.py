@@ -1,16 +1,10 @@
-# PyQt4 modules
-import PyQt4
-from PyQt4 import QtGui
-from PyQt4.QtCore import QThread, QRect
-from PyQt4 import QtCore
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
 
-import sys
-import os
+from PyQt4 import QtGui,QtCore 
+from PyQt4.QtCore import * 
+from PyQt4.QtGui import * 
+
+import sys, os
 import numpy as np
-from math import ceil,floor
-from scipy import ndimage
 
 import main
 from main import *
@@ -128,8 +122,7 @@ class drawing_path():
 					line += "  "
 			print(line)
 
-
-class window(QtGui.QWidget):
+class window(QWidget):
 	def __init__(self, parent=None):
 		super(window, self).__init__()
 		self.worker = predict_worker(parent=self)
@@ -138,45 +131,48 @@ class window(QtGui.QWidget):
 	def init_ui(self):
 		self.setFixedHeight(600)
 		self.setFixedWidth(450)
-		self.setWindowTitle("Dynamic Digit Prediction")
+		self.setWindowTitle("MNIST Digit Prediction")
 		self.hasDrawing = False
 		self.mouseHeld = False
 
 		self.path = drawing_path()
 
-		self.main_layout = QtGui.QVBoxLayout(self) # Main layout for the GUI
-
 		self.rect = QRect(0, 50, 400, 400)
 
-		self.label = QtGui.QLabel("Click and hold the left mouse button to draw a digit (0-9)", self)
-		self.label.move(5, 10)
+		self.label = QLabel("Click and hold the left mouse button to draw.", self)
+		self.label.move(25, 10)
 		self.label.setFixedWidth(300)
-		self.results = QtGui.QLabel("Results will appear here", self)
+
+		self.label2 = QLabel("Classifications include numerals (0-9).",self)
+		self.label2.move(25,35)
+		self.label2.setFixedWidth(300)
+
+		self.results = QLabel("Results will appear here", self)
 		self.results.move(25, 540)
 		self.results.setFixedWidth(300)
-		self.result_label = QtGui.QLabel("", self)
+		self.result_label = QLabel("", self)
 		self.result_label.move(330, 490)
 
-		self.clear_button = QtGui.QPushButton("Clear", self)
+		self.clear_button = QPushButton("Clear", self)
 		self.clear_button.move(330, 535)
 		self.clear_button.clicked.connect(self.clear)
 
-		self.upper_line = QtGui.QFrame(self)
+		self.upper_line = QFrame(self)
 		self.upper_line.setFrameShape(QFrame.HLine)
 		self.upper_line.move(25, 85)
 		self.upper_line.setFixedWidth(400)
 
-		self.lower_line = QtGui.QFrame(self)
+		self.lower_line = QFrame(self)
 		self.lower_line.setFrameShape(QFrame.HLine)
 		self.lower_line.move(25, 485)
 		self.lower_line.setFixedWidth(400)
 
-		self.left_line = QtGui.QFrame(self)
+		self.left_line = QFrame(self)
 		self.left_line.setFrameShape(QFrame.VLine)
 		self.left_line.move(-25, 100)
 		self.left_line.setFixedHeight(400)
 
-		self.right_line = QtGui.QFrame(self)
+		self.right_line = QFrame(self)
 		self.right_line.setFrameShape(QFrame.VLine)
 		self.right_line.move(375, 100)
 		self.right_line.setFixedHeight(400)
@@ -247,6 +243,7 @@ class window(QtGui.QWidget):
 
 	def mouseReleaseEvent(self, event):
 		self.mouseHeld = False
+		if len(self.path.x_pos)<4: return
 		self.results.setText("Processing Data...")
 		self.worker.process_data(self.path)
 
